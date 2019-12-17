@@ -44,6 +44,44 @@ function PolicyEval!(value::Array{Float64, 2}, iters=100)
     value
 end
 
-value = zeros(Float64, SIZE, SIZE)
-valueiters!(value)
+#function PolicyImprove(value::Array{Float64, 2})
+#    policy = zeros(Float64, SIZE, SIZE)
+#    for ind in CartesianIndices((SIZE, SIZE))
 
+value = zeros(Float64, SIZE, SIZE)
+PolicyEval!(value)
+display(value); println()
+
+#i = CartesianIndex(2, 2)
+#for action in ACTIONS
+#    println(action)
+#    j, r = step(i, action)
+#    println(j, r + γ * value[j])
+#end
+
+π = fill(0.25, n_states, n_actions)
+
+println("random policy")
+display(π)
+
+linear = LinearIndices((SIZE, SIZE))
+cartesian = CartesianIndices((SIZE, SIZE))
+
+for s in linear
+    chosen_a = argmax(π[s])
+
+    action_vals = zeros(n_actions)
+    for a in 1:n_actions
+        (ns, r) = step(cartesian[s], ACTIONS[a])
+        action_vals[a] = r + γ * value[ns]
+    end
+
+    best_a = argmax(action_vals)
+
+    if chosen_a != best_a
+        π[s, :] = Matrix{Float64}(I, n_actions, n_actions)[best_a, :]
+    end
+end
+
+println("updated policy")
+display(π)
