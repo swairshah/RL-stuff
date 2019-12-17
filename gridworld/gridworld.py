@@ -79,8 +79,9 @@ for s, (s_i, s_j) in enumerate(np.ndindex(GRID.shape)):
         action_vals[a] = reward + DISCOUNT * value[ns_i, ns_j]
 
     best_a = np.argmax(action_vals)
-    
-    policy[s] = np.eye(n_actions)[best_a]
+
+    if chosen_a != best_a:
+        policy[s] = np.eye(n_actions)[best_a]
 
 print("updated policy")
 print(policy)
