@@ -1,6 +1,7 @@
 using Plots
+using LinearAlgebra
 
-const DISCOUNT = 1
+const γ = 1
 const SIZE = 4
 const GRID = reshape(1:SIZE*SIZE, (SIZE, SIZE)) 
 
@@ -12,6 +13,9 @@ const ACTIONS = [
                 ]
 
 const ACTION_PROB = 0.25
+
+const n_actions = 4
+const n_states = 16
 
 isterminal(s::CartesianIndex{2}) = 
         s == CartesianIndex(1,1) || s == CartesianIndex(4,4) 
@@ -26,18 +30,18 @@ function step(s::CartesianIndex{2}, a::CartesianIndex{2})
     (ns, r)
 end
 
-function valueiters!(value::Array{Float64, 2})
-    for _ = 1:10
+function PolicyEval!(value::Array{Float64, 2}, iters=100)
+    for _ = 1:iters
         new_value = zeros(Float64, SIZE, SIZE)
         for ind in CartesianIndices((SIZE, SIZE))
             for action in ACTIONS
                 next_ind, reward = step(ind, action)
-                new_value[ind] += ACTION_PROB * (reward + DISCOUNT * value[next_ind])
+                new_value[ind] += ACTION_PROB * (reward + γ * value[next_ind])
             end
         end
-        value = new_value
-        display(value); println()
+        value .= new_value
     end
+    value
 end
 
 value = zeros(Float64, SIZE, SIZE)
