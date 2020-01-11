@@ -1,4 +1,4 @@
-from agent import Agent
+from agent import TabularQAgent
 import numpy as np
 import gym
 import matplotlib.pyplot as plt
@@ -8,7 +8,7 @@ env = gym.make('FrozenLake-v0')
 n_actions = env.action_space.n
 n_states = env.observation_space.n
 
-A = Agent(lr=0.001, gamma=0.9, 
+A = TabularQAgent(lr=0.001, gamma=0.9, 
           eps_max = 1.0, eps_min = 0.01, eps_dec = 0.9999995, 
           n_actions = n_actions, n_states = n_states)
 
