@@ -2,6 +2,7 @@ from agent import TabularQAgent, DeepQAgent
 import numpy as np
 import gym
 import matplotlib.pyplot as plt
+from utils import plot_learning_curve
 
 env = gym.make('CartPole-v1')
 n_actions = env.action_space.n
@@ -11,9 +12,10 @@ A = DeepQAgent(lr=0.001, gamma=0.9,
           eps_max = 1.0, eps_min = 0.01, eps_dec = 0.9999995, 
           n_actions = n_actions, n_states = n_states, input_dims = n_states)
 
-n_episodes = 5000000
+n_episodes = 10000
 win_pct_list = []
 scores = []
+eps_history = []
 
 for i in range(n_episodes):
     done = False
@@ -29,6 +31,7 @@ for i in range(n_episodes):
         s = s_
         
     scores.append(score)
+    eps_history.append(A.eps)
     if i % 100 == 0:
         win_pct = np.mean(scores[-100:])
         win_pct_list.append(win_pct)
@@ -36,5 +39,8 @@ for i in range(n_episodes):
             print('episode', i, 'win pct %.2f' % win_pct, 
                                 'eps %2.f' % A.eps)
 
-plt.plot(win_pct_list)
-plt.show()
+#plt.plot(win_pct_list)
+#plt.show()
+
+x = [i+1 for i in range(n_episodes)]
+plot_learning_curve(x, scores, eps_history)
